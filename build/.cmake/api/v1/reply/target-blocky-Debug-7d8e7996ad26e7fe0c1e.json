@@ -1,0 +1,210 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "src/blocky"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries"
+		],
+		"files" : 
+		[
+			"src/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 2,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 4,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g"
+				},
+				{
+					"fragment" : "-std=gnu++20"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 2,
+					"define" : "FASTNOISE_STATIC_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "SPDLOG_COMPILED_LIB"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 2,
+					"path" : "/home/szripr/Projects/blocky/src"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/szripr/Projects/blocky/external"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/szripr/Projects/blocky/external/glm"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/szripr/Projects/blocky/external/entt/src"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/szripr/Projects/blocky/external/FastNoise2/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/szripr/Projects/blocky/external/glad/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/szripr/Projects/blocky/external/glfw/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/szripr/Projects/blocky/external/spdlog/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					2
+				],
+				"standard" : "20"
+			},
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "glad::@89556154f30252d09d22"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "imgui::@89556154f30252d09d22"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "glfw::@ca12bac854c2ac6b2230"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "spdlog::@e2ce52242414c9d53ee8"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "FastNoise::@5df1cd7d4b0a4f561176"
+		}
+	],
+	"id" : "blocky::@145eef247bfb46b6828c",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "../external/FastNoise2/src/libFastNoiseD.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "../external/libglad.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "../external/glfw/src/libglfw3.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "/usr/lib64/librt.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lm",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-ldl",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "../external/libimgui.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "../external/spdlog/libspdlogd.a",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "blocky",
+	"nameOnDisk" : "blocky",
+	"paths" : 
+	{
+		"build" : "src",
+		"source" : "src"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/main.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

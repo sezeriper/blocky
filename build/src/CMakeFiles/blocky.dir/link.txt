@@ -1,0 +1,1 @@
+/usr/bin/clang++-13 -g CMakeFiles/blocky.dir/main.cpp.o -o blocky  ../external/FastNoise2/src/libFastNoiseD.a ../external/libglad.a ../external/glfw/src/libglfw3.a /usr/lib64/librt.a -lm -ldl ../external/libimgui.a ../external/spdlog/libspdlogd.a 
