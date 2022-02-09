@@ -1,5 +1,6 @@
-# Created by https://www.toptal.com/developers/gitignore/api/c++,cmake,sublimetext,visualstudio,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=c++,cmake,sublimetext,visualstudio,visualstudiocode
+
+# Created by https://www.toptal.com/developers/gitignore/api/c++,sublimetext,visualstudio,visualstudiocode,cmake
+# Edit at https://www.toptal.com/developers/gitignore?templates=c++,sublimetext,visualstudio,visualstudiocode,cmake
 
 ### C++ ###
 # Prerequisites
@@ -499,7 +500,5 @@ FodyWeavers.xsd
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
-# End of https://www.toptal.com/developers/gitignore/api/c++,cmake,sublimetext,visualstudio,visualstudiocode
-
-# Custom Excludes
+# End of https://www.toptal.com/developers/gitignore/api/c++,sublimetext,visualstudio,visualstudiocode,cmake
 build/
