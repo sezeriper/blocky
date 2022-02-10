@@ -44,6 +44,6 @@ namespace blocky
 
   private:
     entt::registry registry;
-    Shader shader{"../../src/game/shaders/flatcolor.vs", "../../src/game/shaders/flatcolor.fs"};
+    Shader shader{"./shaders/flatcolor.vs", "./shaders/flatcolor.fs"};
   };
 }

@@ -1,4 +1,3 @@
-
 # Created by https://www.toptal.com/developers/gitignore/api/c++,sublimetext,visualstudio,visualstudiocode,cmake
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,sublimetext,visualstudio,visualstudiocode,cmake
 
@@ -502,3 +501,4 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,sublimetext,visualstudio,visualstudiocode,cmake
 build/
+rebuild_and_run
