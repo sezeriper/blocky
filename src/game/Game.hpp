@@ -61,7 +61,7 @@ namespace blocky
 
   private:
     entt::registry registry;
-    Shader shader{"./shaders/flatcolor.vs", "./shaders/flatcolor.fs"};
+    Shader shader{"shaders/flatcolor.vs", "shaders/flatcolor.fs"};
     Camera camera;
 
     float cursorSens{0.002f};

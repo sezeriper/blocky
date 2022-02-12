@@ -8,9 +8,6 @@ add_subdirectory(spdlog)
 
 add_subdirectory(glm)
 
-set(FASTNOISE2_NOISETOOL OFF CACHE BOOL "Build Noise Tool" FORCE)
-add_subdirectory(FastNoise2)
-
 add_library(glad glad/src/glad.c)
 target_include_directories(glad PUBLIC glad/include)
 
