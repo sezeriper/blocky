@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -19,7 +20,7 @@ namespace blocky
         spdlog::error("glfw initialization failed");
       }
 
-      glfwSetErrorCallback(error_callback);
+      glfwSetErrorCallback(errorCallback);
 
       glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
       glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
@@ -27,34 +28,81 @@ namespace blocky
       glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
       glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-      window_ptr = glfwCreateWindow(width, height, title, nullptr, nullptr);
-      if (!window_ptr)
+      window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+      if (!window)
       {
         spdlog::error("window creation failed");
         glfwTerminate();
       }
 
-      glfwSetFramebufferSizeCallback(window_ptr, Context::frameBufferSizeCallback);
+      glfwSetWindowUserPointer(window, this);
+
+      glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+      glfwSetCursorPosCallback(window, cursorPosCallback);
+
+      glfwSetFramebufferSizeCallback(window, Context::frameBufferSizeCallback);
     }
 
     ~Window()
     {
-      glfwDestroyWindow(window_ptr);
+      glfwDestroyWindow(window);
       glfwTerminate();
     }
 
-    bool is_running() const { return !glfwWindowShouldClose(window_ptr); }
+    float getCursorPosX() const { return cursorX; }
+    float getCursorPosY() const { return cursorY; }
 
-    void poll_events() { glfwPollEvents(); }
+    float getWidth() const {
+      int width{ 0 };
+      glfwGetWindowSize(window, &width, nullptr);
+      return static_cast<float>(width);
+    }
 
-    GLFWwindow *get_window_ptr() { return window_ptr; }
+    float getHeight() const {
+      int height{ 0 };
+      glfwGetWindowSize(window, nullptr, &height);
+      return static_cast<float>(height);
+    }
+
+    bool isRunning() const { return !glfwWindowShouldClose(window); }
+
+    void pollEvents() { glfwPollEvents(); }
+
+    GLFWwindow *getWindowPtr() { return window; }
+
+    void vsyncOn() {
+      glfwSwapInterval(1);
+    }
+
+    void vsyncOff() {
+      glfwSwapInterval(0);
+    }
 
   private:
-    GLFWwindow *window_ptr;
+    GLFWwindow *window{};
 
-    static void error_callback(int error, const char *description)
+    bool firstMouseMotion{ true };
+
+    float cursorX{};
+    float cursorY{};
+
+    static void errorCallback(int error, const char *description)
     {
       spdlog::error(description);
+    }
+
+    static void cursorPosCallback(GLFWwindow* win, double xpos, double ypos) {
+      auto window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(win));
+
+      if (window->firstMouseMotion) {
+        glfwSetCursorPos(window->getWindowPtr(), 0.0, 0.0);
+        window->firstMouseMotion = false;
+        return;
+      }
+
+      window->cursorX = static_cast<float>(xpos);
+      window->cursorY = static_cast<float>(ypos);
     }
   };
 }

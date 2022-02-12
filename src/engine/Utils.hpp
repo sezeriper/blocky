@@ -4,6 +4,8 @@
 #include <fstream>
 #include <filesystem>
 
+#include <spdlog/spdlog.h>
+
 namespace blocky
 {
   namespace Utils

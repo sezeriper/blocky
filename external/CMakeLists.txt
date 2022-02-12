@@ -1,4 +1,6 @@
-add_subdirectory(glfw)
+if(NOT EMSCRIPTEN)
+	add_subdirectory(glfw)
+endif()
 
 add_subdirectory(entt)
 

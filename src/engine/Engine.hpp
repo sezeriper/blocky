@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <engine/Window.hpp>
@@ -12,24 +11,21 @@ namespace blocky
   {
     void run()
     {
-      create();
-      while (window.is_running())
+      while (window.isRunning())
       {
         auto start = Time::millis();
-        window.poll_events();
+        window.pollEvents();
         update(deltaTime);
         context.swapClearBuffers();
         deltaTime = Time::millis() - start;
       }
     }
 
-    virtual void create() = 0;
-    virtual void update(Duration deltaTime) = 0;
+    virtual void update(float deltaTime) = 0;
 
-  private:
-    Window window{720, 720, "blocky"};
-    Context context{window.get_window_ptr(), {0.1f, 0.1f, 0.1f, 0.1f}};
-
-    Duration deltaTime = Time::millis();
+  protected:
+    Window window{920, 720, "blocky"};
+    Context context{window.getWindowPtr(), {0.1f, 0.1f, 0.1f, 0.1f}};
+    float deltaTime{Time::millis()};
   };
 }

@@ -2,20 +2,22 @@
 
 #include <engine/Time.hpp>
 #include <spdlog/spdlog.h>
+#include <string_view>
 
 namespace blocky
 {
   struct Timer
   {
-    Timer() : start{Time::millis()} {}
+    Timer(std::string_view msg) : msg(msg), start{Time::millis()} {}
 
     ~Timer()
     {
       auto diff = Time::millis() - start;
-      spdlog::info("Elapsed time: {}", diff);
+      spdlog::info("{}: {}ms", msg, diff);
     }
 
   private:
-    Duration start;
+    std::string_view msg;
+    float start;
   };
 }

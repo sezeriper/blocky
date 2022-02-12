@@ -5,11 +5,9 @@
 
 namespace blocky
 {
-  using Duration = float;
-
   namespace Time
   {
-    Duration second() { return glfwGetTime(); }
-    Duration millis() { return glfwGetTime() * 1000.0; }
+    float second() { return glfwGetTime(); }
+    float millis() { return glfwGetTime() * 1000.0; }
   }
 };

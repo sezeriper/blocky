@@ -18,8 +18,9 @@ namespace blocky
       Buffer vertBuf;
       Buffer elmBuf;
       GLsizei elmCount;
-      glm::mat4 modelMat;
     };
+
+    using Transform = glm::mat4;
 
     constexpr GLsizei getSize(const auto &data)
     {
@@ -40,7 +41,7 @@ namespace blocky
       glBufferData(GL_ARRAY_BUFFER, getSize(vertices), vertices.data(), GL_STATIC_DRAW);
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, getSize(indices), indices.data(), GL_STATIC_DRAW);
 
-      return {vertBuf, elmBuf, static_cast<GLsizei>(indices.size()), glm::mat4(1.0f)};
+      return {vertBuf, elmBuf, static_cast<GLsizei>(indices.size())};
     }
 
     void destroyMesh(const Mesh &mesh)
@@ -60,11 +61,11 @@ namespace blocky
 
     void render(const entt::registry &registry, Shader &shader)
     {
-      auto view = registry.view<const Mesh>();
+      auto view = registry.view<const Mesh, const Transform>();
 
-      for (const auto &[entity, mesh] : view.each())
+      for (const auto &[entity, mesh, transform] : view.each())
       {
-        shader.setUniform("modelMat", mesh.modelMat);
+        shader.setUniform("modelMat", transform);
         drawMesh(mesh);
       }
     }
