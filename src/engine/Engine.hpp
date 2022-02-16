@@ -1,31 +1,51 @@
 #pragma once
 
+#include <engine/Time.hpp>
 #include <engine/Window.hpp>
 #include <engine/gles2/Context.hpp>
-#include <engine/gles2/Renderer.hpp>
-#include <engine/Time.hpp>
 
-namespace blocky
-{
-  struct Engine
-  {
-    void run()
-    {
-      while (window.isRunning())
-      {
-        auto start = Time::millis();
-        window.pollEvents();
-        update(deltaTime);
-        context.swapClearBuffers();
-        deltaTime = Time::millis() - start;
-      }
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
+namespace blocky {
+struct Engine {
+  Engine() { context.create(window.getPtr(), {0.1f, 0.1f, 0.1f, 0.1f}); }
+
+  void run() {
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop_arg(loop, reinterpret_cast<void *>(this), 0, 1);
+#else
+    while (window.isRunning())
+      loop(this);
+#endif
+  }
+
+protected:
+  Context context;
+  Window window{920, 720, "blocky"};
+
+  virtual void create() = 0;
+  virtual void update(float deltaTime) = 0;
+
+private:
+  float deltaTime{Time::millis()};
+  bool firstRun{true};
+
+  static void loop(void *voidPtr) {
+    auto start = Time::millis();
+    Engine &engine = *reinterpret_cast<Engine *>(voidPtr);
+
+    if (engine.firstRun) {
+      engine.create();
+      engine.firstRun = false;
     }
 
-    virtual void update(float deltaTime) = 0;
+    engine.window.pollEvents();
+    engine.update(engine.deltaTime);
+    engine.context.prepBuffers();
 
-  protected:
-    Window window{920, 720, "blocky"};
-    Context context{window.getWindowPtr(), {0.1f, 0.1f, 0.1f, 0.1f}};
-    float deltaTime{Time::millis()};
-  };
-}
+    engine.deltaTime = Time::millis() - start;
+  }
+};
+} // namespace blocky

@@ -2,8 +2,7 @@
 
 using namespace blocky;
 
-int main()
-{
+int main() {
   Game game;
   game.run();
 

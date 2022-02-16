@@ -501,5 +501,7 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,sublimetext,visualstudio,visualstudiocode,cmake
 build/
+build_web/
+build_dt/
 rebuild_and_run
 rebuild_and_run_web

@@ -1,13 +1,15 @@
 #pragma once
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#include "sdl/include/SDL_timer.h"
+#include <SDL2/SDL.h>
 
-namespace blocky
-{
-  namespace Time
-  {
-    float second() { return glfwGetTime(); }
-    float millis() { return glfwGetTime() * 1000.0; }
-  }
-};
+namespace blocky {
+namespace Time {
+float second() {
+  return static_cast<float>(SDL_GetPerformanceCounter()) /
+         static_cast<float>(SDL_GetPerformanceFrequency());
+}
+
+float millis() { return second() * 1000.0f; }
+} // namespace Time
+} // namespace blocky

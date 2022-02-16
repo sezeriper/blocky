@@ -1,108 +1,65 @@
 #pragma once
 
-#include <memory>
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-
-#include <glad/glad.h>
-#include <spdlog/spdlog.h>
-
+#include <engine/Utils.hpp>
 #include <engine/gles2/Context.hpp>
 
-namespace blocky
-{
-  struct Window
-  {
-    Window(int width, int height, const char *title)
-    {
-      if (!glfwInit())
-      {
-        spdlog::error("glfw initialization failed");
+#include <SDL2/SDL.h>
+#include <spdlog/spdlog.h>
+
+#include <memory>
+
+namespace blocky {
+struct Window {
+  Window(int width, int height, const char *title) : width(width), height(height) {
+    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
+                              SDL_WINDOWPOS_UNDEFINED, width, height,
+                              SDL_WINDOW_OPENGL);
+
+    if (!window) {
+      Utils::printSDLError();
+    }
+  }
+
+  ~Window() { SDL_Quit(); }
+
+  SDL_Window *getPtr() { return window; }
+
+  float getCursorPosX() const { return cursorX; }
+  float getCursorPosY() const { return cursorY; }
+
+  int getWidth() const {
+    return width;
+  }
+
+  int getHeight() const {
+    return height;
+  }
+
+  float getAspect() const {
+    return static_cast<float>(width) / static_cast<float>(height);
+  }
+
+  bool isRunning() const { return !quit; }
+
+  void pollEvents() {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+      if(event.type == SDL_QUIT) {
+        quit = true;
       }
-
-      glfwSetErrorCallback(errorCallback);
-
-      glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
-      glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-      glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-      window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-      if (!window)
-      {
-        spdlog::error("window creation failed");
-        glfwTerminate();
-      }
-
-      glfwSetWindowUserPointer(window, this);
-
-      glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-      glfwSetCursorPosCallback(window, cursorPosCallback);
-
-      glfwSetFramebufferSizeCallback(window, Context::frameBufferSizeCallback);
     }
+  }
 
-    ~Window()
-    {
-      glfwDestroyWindow(window);
-      glfwTerminate();
-    }
+private:
+  SDL_Window *window{};
 
-    float getCursorPosX() const { return cursorX; }
-    float getCursorPosY() const { return cursorY; }
+  bool quit{false};
+  bool firstMouseMotion{true};
 
-    float getWidth() const {
-      int width{ 0 };
-      glfwGetWindowSize(window, &width, nullptr);
-      return static_cast<float>(width);
-    }
+  float cursorX{};
+  float cursorY{};
 
-    float getHeight() const {
-      int height{ 0 };
-      glfwGetWindowSize(window, nullptr, &height);
-      return static_cast<float>(height);
-    }
-
-    bool isRunning() const { return !glfwWindowShouldClose(window); }
-
-    void pollEvents() { glfwPollEvents(); }
-
-    GLFWwindow *getWindowPtr() { return window; }
-
-    void vsyncOn() {
-      glfwSwapInterval(1);
-    }
-
-    void vsyncOff() {
-      glfwSwapInterval(0);
-    }
-
-  private:
-    GLFWwindow *window{};
-
-    bool firstMouseMotion{ true };
-
-    float cursorX{};
-    float cursorY{};
-
-    static void errorCallback(int error, const char *description)
-    {
-      spdlog::error(description);
-    }
-
-    static void cursorPosCallback(GLFWwindow* win, double xpos, double ypos) {
-      auto window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(win));
-
-      if (window->firstMouseMotion) {
-        glfwSetCursorPos(window->getWindowPtr(), 0.0, 0.0);
-        window->firstMouseMotion = false;
-        return;
-      }
-
-      window->cursorX = static_cast<float>(xpos);
-      window->cursorY = static_cast<float>(ypos);
-    }
-  };
-}
+  int width{};
+  int height{};
+};
+} // namespace blocky
