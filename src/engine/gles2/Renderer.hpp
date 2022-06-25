@@ -1,65 +1,87 @@
 #pragma once
 
 #include <engine/gles2/Shader.hpp>
+#include <engine/gles2/Texture.hpp>
 
 #include <entt/entt.hpp>
 
 namespace blocky {
 namespace Renderer {
+
+using Transform = glm::mat4;
+
+struct Vertex {
+    constexpr Vertex(glm::vec3 position, glm::vec2 uvs) : position(position), uvs(uvs) {}
+
+    glm::vec3 position;
+    glm::vec2 uvs;
+};
+
+using Index = GLuint;
+
 using Buffer = GLuint;
 
 struct Mesh {
   Buffer vertBuf;
-  Buffer elmBuf;
+  Buffer idxBuf;
   GLsizei elmCount;
 };
 
-using Transform = glm::mat4;
-
-constexpr GLsizei getSize(const auto &data) {
-  return data.size() * sizeof(data[0]);
-}
-
-Mesh makeMesh(const auto &vertices, const auto &indices) {
+Buffer makeVertexBuffer(const auto& vertices) {
   Buffer vertBuf{0};
-  Buffer elmBuf{0};
-
   glGenBuffers(1, &vertBuf);
-  glGenBuffers(1, &elmBuf);
-
   glBindBuffer(GL_ARRAY_BUFFER, vertBuf);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elmBuf);
+  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
-  glBufferData(GL_ARRAY_BUFFER, getSize(vertices), vertices.data(),
-               GL_STATIC_DRAW);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, getSize(indices), indices.data(),
-               GL_STATIC_DRAW);
-
-  return {vertBuf, elmBuf, static_cast<GLsizei>(indices.size())};
+  return vertBuf;
 }
 
-void destroyMesh(const Mesh &mesh) {
-  glDeleteBuffers(1, &mesh.vertBuf);
-  glDeleteBuffers(1, &mesh.elmBuf);
+Buffer makeIndexBuffer(const auto& indices) {
+  Buffer idxBuf{0};
+  glGenBuffers(1, &idxBuf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxBuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(Index), indices.data(), GL_STATIC_DRAW);
+
+  return idxBuf;
 }
 
-void drawMesh(const Mesh &mesh) {
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.elmBuf);
+Mesh makeMesh(const auto& vertices, const auto& indices) {
+  return {
+    makeVertexBuffer(vertices),
+      makeIndexBuffer(indices),
+      static_cast<GLsizei>(indices.size())
+  };
+}
+
+void destroyBuffer(const Buffer& buffer) {
+  glDeleteBuffers(1, &buffer);
+}
+
+void destroyMesh(const Mesh& mesh) {
+  destroyBuffer(mesh.vertBuf);
+  destroyBuffer(mesh.idxBuf);
+}
+
+void drawMesh(const Mesh& mesh) {
   glBindBuffer(GL_ARRAY_BUFFER, mesh.vertBuf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.idxBuf);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)sizeof(glm::vec3));
+
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
 
-  glDrawElements(GL_TRIANGLES, mesh.elmCount, GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, mesh.elmCount, GL_UNSIGNED_INT, nullptr);
 }
 
-void render(const entt::registry &registry, Shader &shader) {
+void render(const entt::registry& registry, Shader& shader) {
   auto view = registry.view<const Mesh, const Transform>();
 
   for (const auto &[entity, mesh, transform] : view.each()) {
-    shader.setUniform("modelMat", transform);
+    shader.setUniform("u_model_mat", transform);
     drawMesh(mesh);
   }
 }
-} // namespace Renderer
-} // namespace blocky
+}
+}

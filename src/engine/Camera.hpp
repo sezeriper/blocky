@@ -1,6 +1,5 @@
 #pragma once
 
-#include "glm/geometric.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -11,13 +10,18 @@ struct Camera {
   float near{0.01f};
   float far{1000.0f};
 
-  float yaw{0.0f};
+  float yaw{glm::radians(-90.0f)};
   float pitch{0.0f};
 
   glm::vec3 pos{0.0f};
+  glm::vec3 front{0.0f};
+  glm::vec3 right{0.0f};
+  glm::vec3 up{0.0f};
+  glm::vec3 ahead{0.0f};
 
   glm::mat4 proj{1.0f};
   glm::mat4 view{1.0f};
+
 
   static constexpr glm::vec3 worldUp{0.0f, 1.0f, 0.0f};
 
@@ -26,15 +30,15 @@ struct Camera {
   }
 
   void calcViewMat() {
-    yaw -= glm::radians(90.0f);
+    front = glm::vec3(glm::cos(yaw) * glm::cos(pitch), glm::sin(pitch),
+                          glm::sin(yaw) * glm::cos(pitch));
 
-    const glm::vec3 front{glm::cos(yaw) * glm::cos(pitch), glm::sin(pitch),
-                          glm::sin(yaw) * glm::cos(pitch)};
-
-    const auto right = glm::normalize(glm::cross(front, worldUp));
-    const auto up = glm::normalize(glm::cross(right, front));
+    right = glm::normalize(glm::cross(front, worldUp));
+    up = glm::normalize(glm::cross(right, front));
 
     view = glm::lookAt(pos, pos + front, up);
+
+    ahead = glm::cross(worldUp, right);
   }
 
   glm::mat4 getViewProjMat() const { return proj * view; }

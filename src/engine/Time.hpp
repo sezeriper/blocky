@@ -1,15 +1,18 @@
 #pragma once
 
-#include "sdl/include/SDL_timer.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 namespace blocky {
 namespace Time {
-float second() {
-  return static_cast<float>(SDL_GetPerformanceCounter()) /
+
+static const auto epoch{SDL_GetPerformanceCounter()};
+
+float seconds() {
+  return static_cast<float>(SDL_GetPerformanceCounter() - epoch) /
          static_cast<float>(SDL_GetPerformanceFrequency());
 }
 
-float millis() { return second() * 1000.0f; }
-} // namespace Time
-} // namespace blocky
+float millis() { return seconds() * 1000.0f; }
+
+}
+}

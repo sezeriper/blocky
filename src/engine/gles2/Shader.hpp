@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <spdlog/spdlog.h>
+#include <glad/glad.h>
 
 namespace blocky {
 struct Shader {
@@ -45,8 +46,13 @@ struct Shader {
   template <typename Type>
   void setUniform(const char *name, const Type &value) {
     const auto location = glGetUniformLocation(program, name);
+
     if constexpr (std::is_same_v<Type, glm::mat4x4>) {
       glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
+    }
+
+    if constexpr (std::is_same_v<Type, GLint>) {
+      glUniform1i(location, value);
     }
   }
 
@@ -67,4 +73,4 @@ private:
     }
   }
 };
-} // namespace blocky
+}

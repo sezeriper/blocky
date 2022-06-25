@@ -1,56 +1,69 @@
 #pragma once
 
-#include <engine/Camera.hpp>
+#include <game/ChunkSystem.hpp>
+#include <game/FPSController.hpp>
+#include <game/BlockMesh.hpp>
+
+#include <engine/gles2/Texture.hpp>
+#include <engine/gles2/DebugGUI.hpp>
 #include <engine/Engine.hpp>
-#include <engine/Time.hpp>
-#include <engine/Timer.hpp>
+#include <engine/Camera.hpp>
 #include <engine/gles2/Renderer.hpp>
 #include <engine/gles2/Shader.hpp>
+#include <engine/gles2/TextureAtlas.hpp>
 
 #include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
 
-#include <array>
-#include <memory>
 
 namespace blocky {
 struct Game : Engine {
+
   void create() override {
-    std::array<GLfloat, 12> vertices{0.5f,  0.5f,  0.0f, 0.5f,  -0.5f, 0.0f,
-                                     -0.5f, -0.5f, 0.0f, -0.5f, 0.5f,  0.0f};
-
-    std::array<GLuint, 6> indices{0, 1, 3, 1, 2, 3};
-
-    auto entity = registry.create();
-
-    auto &mesh = registry.emplace<Renderer::Mesh>(entity);
-    mesh = Renderer::makeMesh(vertices, indices);
-
-    registry.emplace<Renderer::Transform>(entity, 1.0f);
-
-    shader.use();
-
-    camera.aspect = window.getAspect();
-    camera.pos = glm::vec3{0.0f, 0.0f, 2.0f};
-    camera.calcProjMat();
-    camera.calcViewMat();
-
-    context.vsyncOn();
+    context.vsyncOff();
+    window.getMouseMotionSink().connect<&FPSController::handleMouse>(fpsController);
   }
 
   void update(float deltaTime) override {
-    /*      camera.yaw = window.getCursorPosX() * cursorSens;
-          camera.pitch = -window.getCursorPosY() * cursorSens;
-          camera.calcViewMat();*/
-    shader.setUniform("viewProjMat", camera.getViewProjMat());
+    fpsController.handleKeyboard(deltaTime, window);
+
+    if (window.isPressed(SDLK_f)) {
+      window.releaseMouse();
+    } else {
+      window.captureMouse();
+    }
+
+    createDebugUI(deltaTime);
+
+    chunkSystem.update(registry, fpsController.camera.pos);
+
+    shader.use();
+    textureAtlas.use(shader);
+    fpsController.use(shader);
+
     Renderer::render(registry, shader);
   }
 
+
 private:
   entt::registry registry;
-  Shader shader{"shaders/flatcolor.vs", "shaders/flatcolor.fs"};
-  Camera camera;
+  Shader shader{"resources/shaders/textured.vert", "resources/shaders/textured.frag"};
+  FPSController fpsController{window.getAspect()};
 
-  float cursorSens{0.002f};
+  float viewDistance{8.0f};
+  ChunkSystem chunkSystem;
+
+  // Texture texture{"resources/textures/dirt.png"};
+  TextureAtlas textureAtlas{"resources/textures/dirt.png"};
+
+  void createDebugUI(float deltaTime) {
+    ImGui::Begin("blocky control panel");
+
+    ImGui::SliderFloat("view distance", &viewDistance, 1.0f, 32.0f);
+    chunkSystem.setViewDistance(viewDistance);
+
+    ImGui::Text("%.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);
+    ImGui::End();
+  }
 };
-} // namespace blocky
+}

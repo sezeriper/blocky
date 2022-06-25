@@ -2,9 +2,9 @@
 
 using namespace blocky;
 
-int main() {
-  Game game;
-  game.run();
+int main(int argc, char *argv[]) {
+    Game game;
+    game.run();
 
-  return 0;
+    return 0;
 }

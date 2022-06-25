@@ -1,7 +1,8 @@
 #pragma once
 
 #include <spdlog/spdlog.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
+#include <stb_image.h>
 
 #include <filesystem>
 #include <fstream>
@@ -12,7 +13,7 @@ namespace Utils {
 std::string readFile(std::filesystem::path path) {
   std::ifstream stream(path, std::ios::in | std::ios::binary);
   if (!stream.is_open()) {
-    spdlog::error("can't open file {}", path.c_str());
+    spdlog::error("can't open file {}", path.string());
   }
 
   const auto size = std::filesystem::file_size(path);
@@ -23,7 +24,7 @@ std::string readFile(std::filesystem::path path) {
   return result;
 }
 
-void printSDLError() { spdlog::error(SDL_GetError()); };
+void printSDLError() { spdlog::error("SDL: {}", SDL_GetError()); };
 
 } // namespace Utils
 } // namespace blocky

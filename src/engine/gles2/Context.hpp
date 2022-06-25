@@ -2,47 +2,53 @@
 
 #include <engine/Utils.hpp>
 
-#include <SDL2/SDL.h>
+#include <glad/glad.h>
+#include <SDL.h>
 #include <glm/glm.hpp>
 #include <spdlog/spdlog.h>
 
-#ifdef __EMSCRIPTEN__
-#include <GLES2/gl2.h>
-#else
-#include <glad/glad.h>
-#endif
-
 namespace blocky {
 struct Context {
-  Context() {
+  void initSDL() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
       Utils::printSDLError();
     }
 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
   }
 
-  void create(SDL_Window *windowPtr, const glm::vec4 &clear_color) {
+  void createGLContext(SDL_Window *windowPtr, const glm::vec4 &clearColor) {
     window = windowPtr;
 
-    auto context = SDL_GL_CreateContext(window);
+    context = SDL_GL_CreateContext(window);
     if (!context) {
       Utils::printSDLError();
     }
 
-#ifndef __EMSCRIPTEN__
-    if (!gladLoadGLES2Loader((GLADloadproc)SDL_GL_GetProcAddress))
+    if (!gladLoadGLES2Loader((GLADloadproc)SDL_GL_GetProcAddress)) {
       spdlog::error("opengl context creation failed");
-#endif
+    }
 
     spdlog::info("vendor: {}", glGetString(GL_VENDOR));
     spdlog::info("renderer: {}", glGetString(GL_RENDERER));
     spdlog::info("version: {}", glGetString(GL_VERSION));
 
-    glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+  }
+
+  SDL_GLContext getContext() const {
+    return context;
   }
 
   void vsyncOn() {
@@ -59,6 +65,7 @@ struct Context {
   }
 
 private:
-  SDL_Window *window;
+  SDL_Window *window{};
+  SDL_GLContext context;
 };
 } // namespace blocky
