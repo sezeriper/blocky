@@ -15,20 +15,16 @@ TextureData downsample(const TextureData& texture) {
 
   TextureData out{width, height};
 
-  for (std::size_t x = 0; x < width; ++x) {
-    for (std::size_t y = 0; y < height; ++y) {
+  for (std::size_t y = 0; y < height; ++y) {
+    for (std::size_t x = 0; x < width; ++x) {
       const auto x2 = x*2;
       const auto y2 = y*2;
 
-      // glm::u32vec3 average = texture.getPixel(x2, y2);
-      // average += texture.getPixel(x2+1, y2);
-      // average += texture.getPixel(x2, y2+1);
-      // average += texture.getPixel(x2+1, y2+1);
-      // average.x = static_cast<float>(average.x) / 4.0f;
-      // average.y = static_cast<float>(average.y) / 4.0f;
-      // average.z = static_cast<float>(average.z) / 4.0f;
-      
-      glm::u8vec3 average{100, 100, 100};
+      glm::vec3 average = texture.getPixel(x2, y2);
+      average += texture.getPixel(x2+1, y2);
+      average += texture.getPixel(x2, y2+1);
+      average += texture.getPixel(x2+1, y2+1);
+      average /=  4.0f;
 
       out.setPixel(x, y, average);
     }

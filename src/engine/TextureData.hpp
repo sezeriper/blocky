@@ -1,9 +1,5 @@
 #pragma once
 
-// #define STBI_MALLOC
-// #define STBI_REALLOC
-// #define STBI_FREE
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -27,22 +23,23 @@ struct TextureData {
     }
   }
 
-  TextureData(int width , int height) :
-    data(reinterpret_cast<Pixel*>(STBI_MALLOC(width * height * channelCount))), width(width), height(height) {}
+  TextureData(int width, int height) :
+    data(reinterpret_cast<Pixel*>(STBI_MALLOC(width * height * sizeof(Pixel)))), width(width), height(height) {}
 
   TextureData(const TextureData& other) : TextureData(other.width, other.height) {
-    std::memcpy(data, other.data, width * height * channelCount);
+    std::memcpy(data, other.data, width * height * sizeof(Pixel));
   }
 
   TextureData& operator=(const TextureData& other) {
-    if (this == &other)
+    if (this == &other) {
       return *this;
+    }
 
     width = other.width;
     height = other.height;
-    data = reinterpret_cast<Pixel*>(STBI_MALLOC(width * height * channelCount));
+    data = reinterpret_cast<Pixel*>(STBI_MALLOC(width * height * sizeof(Pixel)));
 
-    std::memcpy(data, other.data, width * height * channelCount);
+    std::memcpy(data, other.data, width * height * sizeof(Pixel));
 
     return *this;
   }
@@ -55,7 +52,7 @@ struct TextureData {
     return data[y * width + x];
   }
 
-  void setPixel(std::size_t x, std::size_t y, const Pixel& pixel) const {
+  void setPixel(std::size_t x, std::size_t y, const Pixel& pixel) {
     data[y * width + x] = pixel;
   }
 };

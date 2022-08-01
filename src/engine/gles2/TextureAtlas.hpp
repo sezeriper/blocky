@@ -7,6 +7,9 @@
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
 namespace blocky {
 struct TextureAtlas {
   TextureAtlas (const char* path) {
