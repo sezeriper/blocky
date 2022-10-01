@@ -5,12 +5,10 @@
 #include <game/BlockMesh.hpp>
 
 #include <engine/gles2/Texture.hpp>
-#include <engine/gles2/DebugGUI.hpp>
 #include <engine/Engine.hpp>
 #include <engine/Camera.hpp>
 #include <engine/gles2/Renderer.hpp>
 #include <engine/gles2/Shader.hpp>
-#include <engine/gles2/TextureAtlas.hpp>
 
 #include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
@@ -20,7 +18,7 @@ namespace blocky {
 struct Game : Engine {
 
   void create() override {
-    context.vsyncOff();
+    context.vsyncOn();
     window.getMouseMotionSink().connect<&FPSController::handleMouse>(fpsController);
   }
 
@@ -38,7 +36,7 @@ struct Game : Engine {
     chunkSystem.update(registry, fpsController.camera.pos);
 
     shader.use();
-    textureAtlas.use(shader);
+    texture.use(shader);
     fpsController.use(shader);
 
     Renderer::render(registry, shader);
@@ -53,13 +51,12 @@ private:
   float viewDistance{8.0f};
   ChunkSystem chunkSystem;
 
-  // Texture texture{"resources/textures/dirt.png"};
-  TextureAtlas textureAtlas{"resources/textures/dirt.png"};
+  Texture texture{"resources/textures/dirt.png"};
 
   void createDebugUI(float deltaTime) {
     ImGui::Begin("blocky control panel");
 
-    ImGui::SliderFloat("view distance", &viewDistance, 1.0f, 32.0f);
+    ImGui::SliderFloat("view distance", &viewDistance, 1.0f, 128.0f);
     chunkSystem.setViewDistance(viewDistance);
 
     ImGui::Text("%.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);

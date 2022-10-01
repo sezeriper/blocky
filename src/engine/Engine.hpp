@@ -2,6 +2,12 @@
 
 #include <engine/Time.hpp>
 #include <engine/Window.hpp>
+#include <engine/gles2/DebugGUI.hpp>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
 
 namespace blocky {
 struct Engine {
@@ -18,17 +24,13 @@ struct Engine {
 
   void run() {
     create();
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop_arg(advance, this, 0, true);
+#else
     while (window.isRunning()) {
-      auto start = Time::seconds();
-
-      context.prepBuffers();
-      window.pollEvents();
-      DebugGUI::beginDraw();
-      update(deltaTime);
-      DebugGUI::endDraw();
-
-      deltaTime = Time::seconds() - start;
+      advance(this);
     }
+#endif
   }
 
 protected:
@@ -40,5 +42,18 @@ protected:
 
 private:
   float deltaTime{Time::seconds()};
+
+  static void advance(void* enginePtr) {
+    Engine* engine = reinterpret_cast<Engine*>(enginePtr);
+    auto start = Time::seconds();
+
+    engine->context.prepBuffers();
+    engine->window.pollEvents();
+    DebugGUI::beginDraw();
+    engine->update(engine->deltaTime);
+    DebugGUI::endDraw();
+
+    engine->deltaTime = Time::seconds() - start;
+  }
 };
 } // namespace blocky

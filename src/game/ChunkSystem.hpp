@@ -23,19 +23,18 @@ struct ChunkSystem {
 
 	void update(entt::registry& registry, const glm::vec3& playerPos) {
 		const glm::vec2 playerPos2d{playerPos.x, playerPos.z};
-
-
+		
 		for (auto it = chunks.begin(); it != chunks.end();) {
 			const auto& coord = it->first;
 			const auto& chunk = it->second;
 
 			if (!isVisible(coord, playerPos2d)) {
+				const auto& mesh = registry.get<Renderer::Mesh>(chunk);
+				Renderer::destroyBuffer(mesh.vertBuf);
 				registry.destroy(chunk);
 				it = chunks.erase(it);
 			}
-			else {
-				++it;
-			}
+			else { ++it; }
 		}
 		
 		const Coord start = globalToCoord(playerPos2d - viewDistance);

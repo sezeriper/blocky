@@ -30,8 +30,11 @@ struct Camera {
   }
 
   void calcViewMat() {
-    front = glm::vec3(glm::cos(yaw) * glm::cos(pitch), glm::sin(pitch),
-                          glm::sin(yaw) * glm::cos(pitch));
+    front = glm::vec3(
+      glm::cos(yaw) * glm::cos(pitch),
+      glm::sin(pitch),
+      glm::sin(yaw) * glm::cos(pitch)
+    );
 
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::normalize(glm::cross(right, front));
