@@ -10,7 +10,6 @@ namespace DebugGUI {
   void init(SDL_GLContext context, SDL_Window* window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-
     ImGui::StyleColorsDark();
 
     ImGui_ImplSDL2_InitForOpenGL(window, context);

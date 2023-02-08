@@ -1,7 +1,6 @@
 #pragma once
 
 #include <engine/Utils.hpp>
-#include <engine/gles2/Context.hpp>
 
 #include <SDL.h>
 #include <spdlog/spdlog.h>
@@ -14,33 +13,14 @@ namespace blocky {
 struct Window {
   using MouseMotionListener = void(int32_t, int32_t);
 
-  void createWindow(int width, int height, const char *title, uint32_t flags) {
-    this->width = width;
-    this->height = height;
+  void setWindow(SDL_Window* newWindow) { window = newWindow; }
 
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
-                              SDL_WINDOWPOS_UNDEFINED, width, height,
-                              flags);
-
-    if (!window) {
-      Utils::printSDLError();
-    }
-  }
-
-  ~Window() { SDL_Quit(); }
-
-  SDL_Window *getPtr() { return window; }
-
-  int getWidth() const {
-    return width;
-  }
-
-  int getHeight() const {
-    return height;
-  }
+  SDL_Window* getSrc() const { return window; }
 
   float getAspect() const {
-    return static_cast<float>(width) / static_cast<float>(height);
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+    return static_cast<float>(w) / static_cast<float>(h);
   }
 
   bool isRunning() const { return !quit; }
@@ -82,13 +62,10 @@ struct Window {
   }
 
 private:
-  SDL_Window *window{};
+  SDL_Window* window{};
 
   bool quit{false};
   bool handleMouse{true};
-
-  int width{};
-  int height{};
 
   entt::sigh<MouseMotionListener> mouseMotionSignal;
 };

@@ -33,6 +33,7 @@ struct Game : Engine {
 
     createDebugUI(deltaTime);
 
+    chunkSystem.setViewDistance(viewDistance);
     chunkSystem.update(registry, fpsController.camera.pos);
 
     shader.use();
@@ -57,7 +58,6 @@ private:
     ImGui::Begin("blocky control panel");
 
     ImGui::SliderFloat("view distance", &viewDistance, 1.0f, 128.0f);
-    chunkSystem.setViewDistance(viewDistance);
 
     ImGui::Text("%.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, 1.0f / deltaTime);
     ImGui::End();

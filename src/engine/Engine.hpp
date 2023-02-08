@@ -3,6 +3,7 @@
 #include <engine/Time.hpp>
 #include <engine/Window.hpp>
 #include <engine/gles2/DebugGUI.hpp>
+#include <engine/gles2/SDLOpenGL.hpp>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -12,14 +13,12 @@
 namespace blocky {
 struct Engine {
   Engine() {
-    context.initSDL();
-    window.createWindow(920, 720, "blocky", SDL_WINDOW_OPENGL);
-    context.createGLContext(window.getPtr(), {0.1f, 0.1f, 0.1f, 1.0f});
-    DebugGUI::init(context.getContext(), window.getPtr());
+    createSDLOpenGL(920, 720, "blocky", window, context);
+    DebugGUI::init(context.getSrc(), window.getSrc());
   }
 
   ~Engine() {
-    DebugGUI::destroy();
+    destroySDLOpenGL(window, context);
   }
 
   void run() {
@@ -47,7 +46,7 @@ private:
     Engine* engine = reinterpret_cast<Engine*>(enginePtr);
     auto start = Time::seconds();
 
-    engine->context.prepBuffers();
+    engine->context.prepBuffers(engine->window);
     engine->window.pollEvents();
     DebugGUI::beginDraw();
     engine->update(engine->deltaTime);

@@ -2,9 +2,9 @@
 
 #include <engine/Utils.hpp>
 
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <spdlog/spdlog.h>
-#include <glad/glad.h>
 
 namespace blocky {
 struct Shader {

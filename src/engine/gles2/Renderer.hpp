@@ -3,6 +3,8 @@
 #include <engine/gles2/Shader.hpp>
 #include <engine/gles2/Texture.hpp>
 
+#include <glad/glad.h>
+
 #include <entt/entt.hpp>
 
 namespace blocky {
@@ -48,8 +50,8 @@ Buffer makeIndexBuffer(const auto& indices) {
 Mesh makeMesh(const auto& vertices, const auto& indices) {
   return {
     makeVertexBuffer(vertices),
-      makeIndexBuffer(indices),
-      static_cast<GLsizei>(indices.size())
+    makeIndexBuffer(indices),
+    static_cast<GLsizei>(indices.size())
   };
 }
 

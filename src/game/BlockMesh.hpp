@@ -1,7 +1,6 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <glad/glad.h>
 
 #include <array>
 
@@ -19,7 +18,7 @@ namespace BlockMesh {
       glm::vec3(0.0f, 1.0f, 1.0f), // 7
   };
 
-  constexpr std::array<GLuint, 36> blockIndices {
+  constexpr std::array<std::uint32_t, 36> blockIndices {
     0, 1, 2, // Fron Face
     0, 2, 3,
 
